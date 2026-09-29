@@ -208,15 +208,15 @@ def create_match_card(
 
     competition_font = get_font(25)
 
-    team_font = get_font(30, True)
+  team_font = get_font(42, True)
 
-    vs_font = get_font(42, True)
+vs_font = get_font(46, True)
 
-    date_font = get_font(30, True)
+date_font = get_font(34, True)
 
-    time_font = get_font(24)
+time_font = get_font(28, True)
 
-    footer_font = get_font(23, True)
+footer_font = get_font(30, True)
 
 
     # TOP LINE
