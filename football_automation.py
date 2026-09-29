@@ -99,10 +99,7 @@ def download_crest(url):
 
     except Exception as error:
 
-        print(
-            "Could not download crest:",
-            error
-        )
+        print("Could not download crest:", error)
 
         return None
 
@@ -155,7 +152,7 @@ def draw_centered_wrapped(
     if current:
         lines.append(current)
 
-    line_height = 48
+    line_height = 38
 
     for index, line in enumerate(lines):
 
@@ -199,29 +196,35 @@ def create_match_card(
     line = (65, 65, 65)
 
 
-    # FONTS
+    # =====================================================
+    # FONT SIZES
+    # =====================================================
 
-    title_font = get_font(38, True)
-    competition_font = get_font(25)
-    team_font = get_font(42, True)
-    vs_font = get_font(46, True)
-    date_font = get_font(34, True)
-    time_font = get_font(28, True)
-    footer_font = get_font(30, True)
+    title_font = get_font(30, True)
+    competition_font = get_font(21)
+    team_font = get_font(30, True)
+    vs_font = get_font(34, True)
+    date_font = get_font(27, True)
+    time_font = get_font(22, True)
+    footer_font = get_font(23, True)
 
 
+    # =====================================================
     # TOP LINE
+    # =====================================================
 
     draw.rectangle(
-        (0, 0, WIDTH, 10),
+        (0, 0, WIDTH, 8),
         fill=white
     )
 
 
+    # =====================================================
     # HEADER
+    # =====================================================
 
     draw.text(
-        (WIDTH // 2, 55),
+        (WIDTH // 2, 50),
         "UPCOMING MATCH",
         fill=white,
         font=title_font,
@@ -229,10 +232,12 @@ def create_match_card(
     )
 
 
+    # =====================================================
     # COMPETITION
+    # =====================================================
 
     draw.text(
-        (WIDTH // 2, 105),
+        (WIDTH // 2, 90),
         competition,
         fill=grey,
         font=competition_font,
@@ -240,7 +245,9 @@ def create_match_card(
     )
 
 
+    # =====================================================
     # CRESTS
+    # =====================================================
 
     home_crest = download_crest(
         home_crest_url
@@ -251,15 +258,13 @@ def create_match_card(
     )
 
 
-    # HOME CREST
-
     if home_crest:
 
         x = 145 + (
             190 - home_crest.width
         ) // 2
 
-        y = 170 + (
+        y = 165 + (
             190 - home_crest.height
         ) // 2
 
@@ -270,15 +275,13 @@ def create_match_card(
         )
 
 
-    # AWAY CREST
-
     if away_crest:
 
         x = 865 + (
             190 - away_crest.width
         ) // 2
 
-        y = 170 + (
+        y = 165 + (
             190 - away_crest.height
         ) // 2
 
@@ -292,7 +295,9 @@ def create_match_card(
     draw = ImageDraw.Draw(image)
 
 
+    # =====================================================
     # VS
+    # =====================================================
 
     draw.text(
         (600, 270),
@@ -303,7 +308,9 @@ def create_match_card(
     )
 
 
+    # =====================================================
     # TEAM NAMES
+    # =====================================================
 
     draw_centered_wrapped(
         draw,
@@ -324,7 +331,9 @@ def create_match_card(
     )
 
 
+    # =====================================================
     # DIVIDER
+    # =====================================================
 
     draw.line(
         (250, 490, 950, 490),
@@ -333,7 +342,9 @@ def create_match_card(
     )
 
 
+    # =====================================================
     # DATE
+    # =====================================================
 
     draw.text(
         (600, 525),
@@ -344,7 +355,9 @@ def create_match_card(
     )
 
 
+    # =====================================================
     # TIME
+    # =====================================================
 
     draw.text(
         (600, 565),
@@ -355,7 +368,9 @@ def create_match_card(
     )
 
 
+    # =====================================================
     # FOOTER
+    # =====================================================
 
     draw.text(
         (600, 650),
@@ -384,10 +399,6 @@ def get_upcoming_matches():
         timezone.utc
     ).date()
 
-
-    # FOOTBALL-DATA.ORG ALLOWS
-    # PERIODS OF UP TO 10 DAYS.
-    # SO WE USE TWO WINDOWS.
 
     windows = [
 
@@ -533,7 +544,9 @@ def get_upcoming_matches():
             )
 
 
+    # =====================================================
     # REMOVE DUPLICATES
+    # =====================================================
 
     unique = {}
 
@@ -548,8 +561,6 @@ def get_upcoming_matches():
         unique.values()
     )
 
-
-    # SORT BY DATE
 
     matches.sort(
         key=lambda x:
@@ -753,8 +764,6 @@ def check_and_post_matches():
         match_id = match["id"]
 
 
-        # ALREADY POSTED?
-
         if match_id in posted:
 
             continue
@@ -791,8 +800,6 @@ def check_and_post_matches():
             f"match_{match_id}.png"
         )
 
-
-        # CREATE IMAGE
 
         create_match_card(
 
@@ -856,8 +863,6 @@ def check_and_post_matches():
                 match["away"]
             )
 
-
-        # DELETE TEMP IMAGE
 
         try:
 
