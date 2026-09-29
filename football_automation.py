@@ -54,6 +54,10 @@ ALLOWED_COMPETITIONS = {
 def get_font(size, bold=False):
 
     paths = [
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+        if bold else
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+
         "C:/Windows/Fonts/arialbd.ttf"
         if bold else
         "C:/Windows/Fonts/arial.ttf",
@@ -64,10 +68,8 @@ def get_font(size, bold=False):
     ]
 
     for path in paths:
-
         try:
             return ImageFont.truetype(path, size)
-
         except:
             pass
 
