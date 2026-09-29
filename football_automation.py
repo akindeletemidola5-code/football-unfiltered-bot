@@ -11,10 +11,10 @@ import time
 # 🔐 YOUR SETTINGS
 # =========================================================
 
-FOOTBALL_DATA_TOKEN = "8bc926f0226d4dc98a333f232426d609"
+import os
 
-BOT_TOKEN = "8258337139:AAGDnZtNuHcVwgrk_LF5PNTs-qJ8Uiq8FGI"
-
+FOOTBALL_DATA_TOKEN = os.getenv("FOOTBALL_DATA_TOKEN")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = "@footballInFilteredX"
 
 
