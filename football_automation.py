@@ -4,14 +4,11 @@ from datetime import datetime, timedelta, timezone
 import requests
 import os
 import json
-import time
 
 
 # =========================================================
-# 🔐 YOUR SETTINGS
+# 🔐 SETTINGS
 # =========================================================
-
-import os
 
 FOOTBALL_DATA_TOKEN = os.getenv("FOOTBALL_DATA_TOKEN")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -21,8 +18,6 @@ CHAT_ID = "@footballInFilteredX"
 # =========================================================
 # ⚙️ AUTOMATION SETTINGS
 # =========================================================
-
-CHECK_EVERY_SECONDS = 15 * 60
 
 MAX_POSTS_PER_RUN = 3
 
@@ -55,22 +50,22 @@ def get_font(size, bold=False):
 
     paths = [
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
-        if bold else
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        if bold
+        else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
 
         "C:/Windows/Fonts/arialbd.ttf"
-        if bold else
-        "C:/Windows/Fonts/arial.ttf",
+        if bold
+        else "C:/Windows/Fonts/arial.ttf",
 
         "C:/Windows/Fonts/segoeuib.ttf"
-        if bold else
-        "C:/Windows/Fonts/segoeui.ttf"
+        if bold
+        else "C:/Windows/Fonts/segoeui.ttf"
     ]
 
     for path in paths:
         try:
             return ImageFont.truetype(path, size)
-        except:
+        except Exception:
             pass
 
     return ImageFont.load_default()
@@ -160,7 +155,7 @@ def draw_centered_wrapped(
     if current:
         lines.append(current)
 
-    line_height = 38
+    line_height = 48
 
     for index, line in enumerate(lines):
 
@@ -200,25 +195,19 @@ def create_match_card(
     draw = ImageDraw.Draw(image)
 
     white = (255, 255, 255)
-
     grey = (175, 175, 175)
-
     line = (65, 65, 65)
 
 
+    # FONTS
+
     title_font = get_font(38, True)
-
     competition_font = get_font(25)
-
-  team_font = get_font(42, True)
-
-vs_font = get_font(46, True)
-
-date_font = get_font(34, True)
-
-time_font = get_font(28, True)
-
-footer_font = get_font(30, True)
+    team_font = get_font(42, True)
+    vs_font = get_font(46, True)
+    date_font = get_font(34, True)
+    time_font = get_font(28, True)
+    footer_font = get_font(30, True)
 
 
     # TOP LINE
@@ -396,7 +385,7 @@ def get_upcoming_matches():
     ).date()
 
 
-    # FOOTBALL-DATA.ORG ONLY ALLOWS
+    # FOOTBALL-DATA.ORG ALLOWS
     # PERIODS OF UP TO 10 DAYS.
     # SO WE USE TWO WINDOWS.
 
@@ -470,7 +459,6 @@ def get_upcoming_matches():
                     "competition",
                     {}
                 )
-
 
                 code = competition.get(
                     "code"
@@ -604,14 +592,12 @@ def load_posted_matches():
             return set(data)
 
 
-    except:
+    except Exception:
 
         return set()
 
 
-def save_posted_matches(
-    posted
-):
+def save_posted_matches(posted):
 
     with open(
         POSTED_FILE,
@@ -630,9 +616,7 @@ def save_posted_matches(
 # 🇳🇬 CONVERT TIME TO LAGOS
 # =========================================================
 
-def format_lagos_time(
-    utc_date
-):
+def format_lagos_time(utc_date):
 
     dt = datetime.fromisoformat(
         utc_date.replace(
@@ -641,8 +625,6 @@ def format_lagos_time(
         )
     )
 
-
-    # Lagos is UTC+1
 
     lagos = dt.astimezone(
         timezone(
@@ -756,9 +738,7 @@ def check_and_post_matches():
 
     posted = load_posted_matches()
 
-
     matches = get_upcoming_matches()
-
 
     posts_this_run = 0
 
@@ -885,7 +865,7 @@ def check_and_post_matches():
                 image_file
             )
 
-        except:
+        except Exception:
 
             pass
 
@@ -897,7 +877,7 @@ def check_and_post_matches():
 
 
 # =========================================================
-# GITHUB ACTIONS RUN
+# 🚀 GITHUB ACTIONS RUN
 # =========================================================
 
 print("====================================")
@@ -907,10 +887,15 @@ print("Automation started.")
 print()
 
 try:
+
     check_and_post_matches()
 
 except Exception as error:
-    print("Automation error:", error)
+
+    print(
+        "Automation error:",
+        error
+    )
 
 print()
 print("Automation run finished.")
