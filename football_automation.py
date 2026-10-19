@@ -612,4 +612,4 @@ def check_and_post_matches():
         posts_this_run,
     )
     if __name__ == "__main__":
-    check_and_post_matches()
+        check_and_post_matches()
