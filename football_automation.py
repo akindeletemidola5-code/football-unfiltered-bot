@@ -516,10 +516,8 @@ def post_match(match, match_eve=False):
 def check_and_post_matches():
     logger.info("Starting Football Unfiltered fixture check.")
 
-    # Preserve the original posting history.
+    # Load regular fixture history and match-eve reminder history separately.
     posted_ids = load_tracker(POSTED_FILE)
-
-    # Track match-eve reposts independently.
     match_eve_ids = load_tracker(MATCH_EVE_FILE)
 
     matches = get_upcoming_matches()
@@ -530,63 +528,19 @@ def check_and_post_matches():
     posts_this_run = 0
 
     # --------------------------------------------------------
-    # 1. Post tomorrow's fixtures once more on match eve.
+    # 1. POST REGULAR UPCOMING FIXTURES FIRST
     # --------------------------------------------------------
+    # This prevents match-eve reminders from consuming the
+    # entire posting allowance before regular fixtures are sent.
 
     for match in matches:
 
         if posts_this_run >= MAX_POSTS_PER_RUN:
             break
 
-        match_id = match["id"]
+        match_id = str(match["id"])
 
-        if match["kickoff"].date() != tomorrow:
-            continue
-
-        if match_id in match_eve_ids:
-            continue
-
-        logger.info(
-            "Match-eve fixture: %s vs %s",
-            match["home"],
-            match["away"],
-        )
-
-        success = post_match(match, match_eve=True)
-
-        if not success:
-            logger.warning(
-                "Match-eve post failed. It will be retried later."
-            )
-            continue
-
-        # Record only after Telegram confirms success.
-        match_eve_ids.add(match_id)
-        posted_ids.add(match_id)
-
-        save_tracker(MATCH_EVE_FILE, match_eve_ids)
-        save_tracker(POSTED_FILE, posted_ids)
-
-        posts_this_run += 1
-
-        time.sleep(2)
-
-    # --------------------------------------------------------
-    # 2. Post ordinary upcoming fixtures once.
-    # --------------------------------------------------------
-
-    for match in matches:
-
-        if posts_this_run >= MAX_POSTS_PER_RUN:
-            break
-
-        match_id = match["id"]
-
-        # Tomorrow's fixtures are handled by the match-eve section.
-        if match["kickoff"].date() == tomorrow:
-            continue
-
-        # Preserve the original no-duplicate behaviour.
+        # Do not repost a fixture already published normally.
         if match_id in posted_ids:
             continue
 
@@ -600,28 +554,60 @@ def check_and_post_matches():
 
         if not success:
             logger.warning(
-                "Upcoming post failed. It will be retried later."
+                "Upcoming fixture failed. It will be retried later."
             )
             continue
 
+        # Save the ID only after Telegram confirms success.
         posted_ids.add(match_id)
-
         save_tracker(POSTED_FILE, posted_ids)
 
         posts_this_run += 1
+        time.sleep(2)
 
+    # --------------------------------------------------------
+    # 2. POST MATCH-EVE REMINDERS SEPARATELY
+    # --------------------------------------------------------
+    # These reminders have their own history, so a reminder
+    # does not prevent a regular fixture post, or vice versa.
+
+    for match in matches:
+
+        if posts_this_run >= MAX_POSTS_PER_RUN:
+            break
+
+        match_id = str(match["id"])
+
+        # Only matches taking place tomorrow receive reminders.
+        if match["kickoff"].date() != tomorrow:
+            continue
+
+        # Do not send the same reminder twice.
+        if match_id in match_eve_ids:
+            continue
+
+        logger.info(
+            "Posting match-eve reminder: %s vs %s",
+            match["home"],
+            match["away"],
+        )
+
+        success = post_match(match, match_eve=True)
+
+        if not success:
+            logger.warning(
+                "Match-eve reminder failed. It will be retried later."
+            )
+            continue
+
+        # Record the reminder only after successful delivery.
+        match_eve_ids.add(match_id)
+        save_tracker(MATCH_EVE_FILE, match_eve_ids)
+
+        posts_this_run += 1
         time.sleep(2)
 
     logger.info(
         "Fixture check finished. Successful posts this run: %s",
         posts_this_run,
     )
-
-
-if __name__ == "__main__":
-    try:
-        check_and_post_matches()
-
-    except Exception:
-        logger.exception("Football Unfiltered automation failed.")
-        raise
