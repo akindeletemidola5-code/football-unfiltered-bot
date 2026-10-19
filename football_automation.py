@@ -611,5 +611,5 @@ def check_and_post_matches():
         "Fixture check finished. Successful posts this run: %s",
         posts_this_run,
     )
-    if __name__ == "__main__":
-        check_and_post_matches()
+if __name__ == "__main__":
+    check_and_post_matches()
