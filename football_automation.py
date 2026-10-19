@@ -522,7 +522,15 @@ def check_and_post_matches():
 
     matches = get_upcoming_matches()
 
-    today = datetime.now(TIMEZONE).date()
+new_fixtures = sum(
+    1 for match in matches
+    if str(match["id"]) not in posted_ids
+)
+
+logger.info("Total fixtures fetched: %s", len(matches))
+logger.info("New fixtures not previously posted: %s", new_fixtures)
+
+today = datetime.now(TIMEZONE).date()
     tomorrow = today + timedelta(days=1)
 
     posts_this_run = 0
