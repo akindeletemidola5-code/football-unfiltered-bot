@@ -24,7 +24,7 @@ TIMEZONE = ZoneInfo("Africa/Lagos")
 POSTED_FILE = "posted_upcoming_matches.json"
 MATCH_EVE_FILE = "posted_match_eve.json"
 
-MAX_POSTS_PER_RUN = 3
+MAX_POSTS_PER_RUN = 10
 
 FOOTBALL_DATA_BASE = "https://api.football-data.org/v4"
 
